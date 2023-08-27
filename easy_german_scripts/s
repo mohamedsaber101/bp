@@ -1,0 +1,12 @@
+# SCRIPT URL ID(512E)
+URL=$1
+ID=$2
+mkdir ~/easy_german/$ID
+cd ~/easy_german/$ID
+pytube $URL
+ls > /tmp/easy_german
+sed -i 's/ /_/g' /tmp/easy_german
+name=`cat /tmp/easy_german`
+mv * ${ID}_$name
+ffmpeg -i ${ID}_$name -vn ${ID}_$name.mp3 
+cd -

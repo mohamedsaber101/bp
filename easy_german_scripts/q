@@ -1,0 +1,29 @@
+cat "$*" |grep -v '^ ' > /tmp/ohne_leer
+awk 'NR % 2 != 0' /tmp/ohne_leer > /tmp/deutsch
+awk 'NR % 2 == 0' /tmp/ohne_leer > /tmp/englisch
+rm /tmp/fd /tmp/fe /tmp/gesamt
+for i in `seq $(wc -l /tmp/deutsch|cut -d" " -f1)`
+do
+DD=`sed -n ${i}p /tmp/deutsch`
+EE=`sed -n ${i}p /tmp/englisch`
+echo $DD|grep '\.$' 
+if [ $? -eq 0 ]
+then
+echo  " $DD" >> /tmp/fd
+echo  " $EE" >> /tmp/fe
+else
+echo -n "$DD " >> /tmp/fd
+echo -n "$EE " >> /tmp/fe
+fi
+done
+
+for i in `seq $(wc -l /tmp/fd|cut -d" " -f1)`
+do
+echo -n 'E -- ' >> /tmp/gesamt
+sed -n ${i}p /tmp/fe >> /tmp/gesamt
+echo '-------------------------' >> /tmp/gesamt
+sed -n ${i}p /tmp/fd >> /tmp/gesamt
+echo " " >> /tmp/gesamt
+done
+
+gedit /tmp/gesamt

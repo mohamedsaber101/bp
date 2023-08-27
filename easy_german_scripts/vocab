@@ -1,0 +1,51 @@
+file="$*"
+delete=false
+rm -rf /tmp/voc
+for i in `seq $(wc -l $file|cut -d" " -f1)`;
+do
+line=$(sed -n ${i}p $file);clear;echo $line
+n=nothing
+for i in `seq $(echo $line|wc -w|cut -d' ' -f1)`
+do
+word=`echo $line|cut -d' ' -f$i`
+if [ $word == to ]
+then
+n=$((i-1))
+break
+fi
+done
+if [ "$n" == "nothing" ]
+then
+echo -n "????????"
+while [ true ]
+do
+read  n
+if [ "$n" == "d" ]
+then
+delete=true
+break
+else 
+delete=false
+break
+fi
+done
+fi
+if [ "$delete" == false ]
+then
+en=$((n+1))
+dl=`echo $line|cut -d' ' -f1-$n`
+el=`echo $line|cut -d' ' -f$en-`
+echo
+echo "$el  ----------**-----------  $dl"
+read -n1 d
+if [ "$d" == "d" ]
+then
+true
+else 
+echo "$el  ----------**-----------  $dl" >> /tmp/voc 
+fi 
+
+fi
+done
+
+gedit /tmp/voc

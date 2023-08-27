@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block b1 %}
+
+
+<div class="row">
+<div class="card text-white bg-dark mb-3 col-12" >
+    
+    <div class="card-body">
+      <h1 class="card-title">{{ sentence1.DE }}</h1>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="card text-white bg-secondary mb-3 col-12" >
+      
+      <div class="card-body">
+        <h1 class="card-title">{{ sentence2.DE }}</h1>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="row">
+    <div class="card text-white bg-dark mb-3 col-12" >
+        
+        <div class="card-body">
+          <h1 class="card-title">{{ sentence3.DE }}</h1>
+        </div>
+      </div>
+    </div>
+    
+<div class="row d-flex flex-row-reverse">
+  <a class="btn btn-danger  col-12  btn-lg" href="{% url 'revision:repeat' %}" role="button">Weiter</a>
+
+  </div>
+  <a class="btn h5 btn-info btn-lg col-4" href="{% url 'revision:set_timer' 'pause' %}" role="button"><b style="color:blueviolet;">{{timer}} </b></a>
+
+{% endblock %}
