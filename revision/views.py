@@ -228,7 +228,8 @@ def dotting(request):
             print (missed_words)
             begin = begin + factor
             round = round + factor
-
+    else:
+        missed_words = []
     new_s = ''
     for i in range(0, s_length):
         word = ''
