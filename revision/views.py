@@ -215,7 +215,10 @@ def dotting(request):
 
     s_words = s.split()
     s_length = len(s_words)
-    factor = 2
+    fac = Paramater.objects.get(name='dotting_factor')
+    factor = int(getattr(fac, 'value'))
+
+
     if s_length >= factor:
         begin = 0
         round = factor - 1
@@ -241,7 +244,6 @@ def dotting(request):
 
         new_s = new_s + ' ' + word
 
-    print (new_s)
     rest_count = Sentence.objects.filter(state='hot',revision_number=0).count()
 
 
