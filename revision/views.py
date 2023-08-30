@@ -201,3 +201,58 @@ def set_timer(request, mode='reset'):
             start_time = datetime.datetime.now() - pausing_time
             timer_state = 'running'
     return next_action(request)
+
+
+def dotting(request):
+
+
+    global mode
+    mode='dotting'
+    sentence_list = Sentence.objects.filter(Q(revision_number__gt=0) | Q(state='cold', revision_number = 0))
+    rid = random.randint(0, len(sentence_list) - 1)
+    sentence = Sentence.objects.get(name=sentence_list[rid])
+    s=str(getattr(sentence , 'DE'))
+
+    s_words = s.split()
+    s_length = len(s_words)
+    factor = 2
+    if s_length >= factor:
+        begin = 0
+        round = factor - 1
+        missed_words = []
+        for i in range(s_length//factor):
+            ns_words = s_words[begin:round]
+
+            rid = random.randint(begin, round)
+            missed_words = missed_words + [s_words[rid]]
+            print (missed_words)
+            begin = begin + factor
+            round = round + factor
+
+    new_s = ''
+    for i in range(0, s_length):
+        word = ''
+        if s_words[i] in missed_words:
+            for k in range(len(s_words[i].replace(',', ''))):
+               word = word + '.'
+        else:
+            word = s_words[i]
+
+        new_s = new_s + ' ' + word
+
+    print (new_s)
+    rest_count = Sentence.objects.filter(state='hot',revision_number=0).count()
+
+
+    context = {
+        'sentence': sentence,
+        'rest_count': rest_count,
+        'timer': str((datetime.datetime.now() - start_time)).split('.')[0],
+        'font_size': font_size,
+        'new_s': new_s,
+
+        
+
+    }
+    return render(request, 'index.html', context)
+

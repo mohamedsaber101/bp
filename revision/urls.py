@@ -5,6 +5,8 @@ app_name = 'revision'
 urlpatterns = [
     path('', views.index, name='index'),
     path('random/', views.random_hot, name='random_hot'),
+    path('dotting/', views.dotting, name='dotting'),
+
     path('repeat/', views.repeat, name='repeat'),
     path('inject/', views.inject, name='inject'),
     path('vocabulary/', views.vocabulary, name='vocabulary'),
