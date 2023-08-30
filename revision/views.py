@@ -228,7 +228,6 @@ def dotting(request):
 
             rid = random.randint(begin, round)
             missed_words = missed_words + [s_words[rid]]
-            print (missed_words)
             begin = begin + factor
             round = round + factor
     else:
