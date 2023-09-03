@@ -205,7 +205,6 @@ def dotting(request):
     global re_index
     global re_list
     global re_boolean
-    print (re_list)
     if len(re_list) >= 3 and re_boolean is True:
         sentence = Sentence.objects.get(pk=re_list[re_index])
         re_index += 1
@@ -254,7 +253,8 @@ def dotting(request):
             word = s_words[i]
 
         new_s = new_s + ' ' + word
-
+    if getattr(sentence, 'type') == 'vocabulary':
+        new_s = '***********'
     rest_count = Sentence.objects.filter(state='hot',revision_number=0).count()
 
 
