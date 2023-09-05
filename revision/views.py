@@ -52,7 +52,7 @@ def vocabulary(request):
         
 
     }
-    return render(request, 'index.html', context)
+    return render(request, 'index_vocab.html', context)
 
 
 def inject(request):
@@ -145,7 +145,7 @@ def random_hot(request):
         
 
     }
-    return render(request, 'index.html', context)
+    return render(request, 'index_vocab.html', context)
 
 
     
