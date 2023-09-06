@@ -138,7 +138,7 @@ def random_hot(request):
     mode='random'
     global random_list
 
-    sentence_list = Sentence.objects.filter(Q(revision_number__gt=0, type='vocabulary') | Q(state='cold', revision_number = 0, type='vocabulary'))
+    sentence_list = Sentence.objects.filter(type='vocabulary')
     while True:
       rid = random.randint(0, len(sentence_list) - 1)
       if rid not in random_list:
