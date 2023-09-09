@@ -42,4 +42,4 @@ class Paramater(models.Model):
      return self.name
     name = models.CharField(max_length=200,unique=True)
 
-    value = models.CharField(max_length=200)
+    value = models.CharField(max_length=99999)

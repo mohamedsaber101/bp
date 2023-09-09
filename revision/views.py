@@ -142,16 +142,19 @@ def random_hot(request):
     random_list_rec = Paramater.objects.get(name='random_list')
     random_list = getattr(random_list_rec, 'value')
     sentence_list = Sentence.objects.filter(type='vocabulary')
+    print (random_list)
+    print (len(sentence_list))
     while True:
-      rid = random.randint(0, len(sentence_list) - 1)
+      rid = random.randint(0, (len(sentence_list) - 1))
       compared_rid = ',' + str(rid) + ','
-      if str(rid) not in random_list:
+
+      if str(compared_rid) not in str(random_list):
           break
     new_v = random_list + str(rid) + ','
     setattr(random_list_rec, 'value', new_v ) 
     random_list_rec.save()
     sentence = Sentence.objects.get(name=sentence_list[rid])
-    rest_count = Sentence.objects.filter(state='hot',revision_number=0).count()
+    rest_count = Sentence.objects.filter(state='hot',revision_number=0, type='vocabulary').count()
     print (random_list)
 
     context = {
