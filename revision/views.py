@@ -24,9 +24,11 @@ def index(request):
     mode='ordered'
     global type
     type = 'index'
-    sentence_name = Sentence.objects.filter(state='hot').order_by('revision_number').first()
+    part_rec = Paramater.objects.get(name='part')
+    part = getattr(part_rec, 'value')
+    sentence_name = Sentence.objects.filter(state='hot', type='vocabulary', part=part).order_by('revision_number').first()
     sentence = Sentence.objects.get(name=str(sentence_name))
-    rest_count = Sentence.objects.filter(state='hot',revision_number=sentence.revision_number).count()
+    rest_count = Sentence.objects.filter(state='hot',type='vocabulary', part=part,revision_number=sentence.revision_number).count()
     context = {
         'sentence': sentence,
         'rest_count': rest_count,
@@ -43,7 +45,9 @@ def vocabulary(request):
     sentence_name = Sentence.objects.filter(state='hot', type='vocabulary').order_by('revision_number').first()
     sentence = Sentence.objects.get(name=str(sentence_name))
     rest_count = Sentence.objects.filter(state='hot',revision_number=sentence.revision_number, type='vocabulary').count()
-    ss = Sentence.objects.all()
+    part_rec = Paramater.objects.get(name='part')
+    part = getattr(part_rec, 'value')
+    ss = Sentence.objects.get(part=part)
     for s in ss:
         setattr(s, 'revision_number', 0)
         setattr(s, 'state', 'hot')
@@ -139,9 +143,11 @@ def random_hot(request):
     global mode
     mode='random'
     global random_list
+    part_rec = Paramater.objects.get(name='part')
+    part = getattr(part_rec, 'value')
     random_list_rec = Paramater.objects.get(name='random_list')
     random_list = getattr(random_list_rec, 'value')
-    sentence_list = Sentence.objects.filter(type='vocabulary')
+    sentence_list = Sentence.objects.filter(type='vocabulary', part=part)
     print (random_list)
     print (len(sentence_list))
     while True:
@@ -154,7 +160,7 @@ def random_hot(request):
     setattr(random_list_rec, 'value', new_v ) 
     random_list_rec.save()
     sentence = Sentence.objects.get(name=sentence_list[rid])
-    rest_count = Sentence.objects.filter(state='hot',revision_number=0, type='vocabulary').count()
+    rest_count = Sentence.objects.filter(state='hot',revision_number=0, type='vocabulary', part=part).count()
     print (random_list)
 
     context = {

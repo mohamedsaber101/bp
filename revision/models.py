@@ -21,6 +21,7 @@ class Sentence(models.Model):
     revision_number = models.IntegerField(default=0)
     state = models.CharField(max_length=200, choices= STATE_CHOICES, default='hot')
     type = models.CharField(max_length=200, choices= TYPE_CHOICES, default='expression')
+    part = models.CharField(max_length=200,  default='jenny')
 
     
 class Index(models.Model):
