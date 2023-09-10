@@ -47,7 +47,7 @@ def vocabulary(request):
     rest_count = Sentence.objects.filter(state='hot',revision_number=sentence.revision_number, type='vocabulary').count()
     part_rec = Paramater.objects.get(name='part')
     part = getattr(part_rec, 'value')
-    ss = Sentence.objects.get(part=part)
+    ss = Sentence.objects.filter(part=part)
     for s in ss:
         setattr(s, 'revision_number', 0)
         setattr(s, 'state', 'hot')
