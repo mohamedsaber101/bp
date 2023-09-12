@@ -16,7 +16,7 @@ DE=`sed -n ${ii}p $file`
 echo $EN -**- $DE
 
 echo from revision.models import \*  > /tmp/django_script
-echo a=Sentence.objects.get_or_create\(name=\"${id}-${i}\",DE=\"$DE\",EN=\"$EN\",revision_number=-1,state=\'cold\',type=\"$type\", part=\'T03\'\) >> /tmp/django_script
+echo a=Sentence.objects.get_or_create\(name=\"${id}-${i}\",DE=\"$DE\",EN=\"$EN\",revision_number=-1,state=\'cold\',type=\"$type\", part=\'T04\'\) >> /tmp/django_script
 echo a=Index.objects.get_or_create\(name=\"${id}\",state=\'pending\'\) >> /tmp/django_script
 python manage.py shell < /tmp/django_script
 

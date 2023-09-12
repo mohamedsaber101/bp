@@ -17,7 +17,7 @@ class Sentence(models.Model):
     
     name = models.CharField(max_length=200,unique=True)
     DE = models.CharField(max_length=2000,unique=True)
-    EN = models.CharField(max_length=2000,unique=True)
+    EN = models.CharField(max_length=2000)
     revision_number = models.IntegerField(default=0)
     state = models.CharField(max_length=200, choices= STATE_CHOICES, default='hot')
     type = models.CharField(max_length=200, choices= TYPE_CHOICES, default='expression')
