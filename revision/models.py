@@ -16,12 +16,13 @@ class Sentence(models.Model):
         return self.name
     
     name = models.CharField(max_length=200,unique=True)
-    DE = models.CharField(max_length=2000,unique=True)
+    DE = models.CharField(max_length=2000)
     EN = models.CharField(max_length=2000)
+    part = models.CharField(max_length=2000)
+    
     revision_number = models.IntegerField(default=0)
     state = models.CharField(max_length=200, choices= STATE_CHOICES, default='hot')
     type = models.CharField(max_length=200, choices= TYPE_CHOICES, default='expression')
-    part = models.CharField(max_length=200,  default='jenny')
 
     
 class Index(models.Model):
@@ -43,4 +44,4 @@ class Paramater(models.Model):
      return self.name
     name = models.CharField(max_length=200,unique=True)
 
-    value = models.CharField(max_length=99999)
+    value = models.CharField(max_length=200)

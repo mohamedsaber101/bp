@@ -17,18 +17,16 @@ font_size = getattr(f, 'value')
 re_index = 0
 re_list = []
 re_boolean = True
-random_list = []
+
 
 def index(request):
     global mode 
     mode='ordered'
     global type
     type = 'index'
-    part_rec = Paramater.objects.get(name='part')
-    part = getattr(part_rec, 'value')
-    sentence_name = Sentence.objects.filter(state='hot', type='vocabulary', part=part).order_by('revision_number').first()
+    sentence_name = Sentence.objects.filter(state='hot').order_by('revision_number').first()
     sentence = Sentence.objects.get(name=str(sentence_name))
-    rest_count = Sentence.objects.filter(state='hot',type='vocabulary', part=part,revision_number=sentence.revision_number).count()
+    rest_count = Sentence.objects.filter(state='hot',revision_number=sentence.revision_number).count()
     context = {
         'sentence': sentence,
         'rest_count': rest_count,
@@ -37,7 +35,7 @@ def index(request):
 
 
     }
-    return render(request, 'index_vocab.html', context)
+    return render(request, 'index.html', context)
 
 def vocabulary(request):
     global mode
@@ -45,16 +43,6 @@ def vocabulary(request):
     sentence_name = Sentence.objects.filter(state='hot', type='vocabulary').order_by('revision_number').first()
     sentence = Sentence.objects.get(name=str(sentence_name))
     rest_count = Sentence.objects.filter(state='hot',revision_number=sentence.revision_number, type='vocabulary').count()
-    part_rec = Paramater.objects.get(name='part')
-    part = getattr(part_rec, 'value')
-    ss = Sentence.objects.filter(part=part)
-    for s in ss:
-        setattr(s, 'revision_number', 0)
-        setattr(s, 'state', 'hot')
-        s.save()
-    random_list_rec = Paramater.objects.get(name='random_list')
-    setattr(random_list_rec, 'value', ',')
-    random_list_rec.save()
     context = {
         'sentence': sentence,
         'rest_count': rest_count,
@@ -64,7 +52,7 @@ def vocabulary(request):
         
 
     }
-    return render(request, 'index_vocab.html', context)
+    return render(request, 'index.html', context)
 
 
 def inject(request):
@@ -142,26 +130,11 @@ def repeat(request):
 def random_hot(request):
     global mode
     mode='random'
-    global random_list
-    part_rec = Paramater.objects.get(name='part')
-    part = getattr(part_rec, 'value')
-    random_list_rec = Paramater.objects.get(name='random_list')
-    random_list = getattr(random_list_rec, 'value')
-    sentence_list = Sentence.objects.filter(type='vocabulary', part=part)
-    print (random_list)
-    print (len(sentence_list))
-    while True:
-      rid = random.randint(0, (len(sentence_list) - 1))
-      compared_rid = ',' + str(rid) + ','
-
-      if str(compared_rid) not in str(random_list):
-          break
-    new_v = random_list + str(rid) + ','
-    setattr(random_list_rec, 'value', new_v ) 
-    random_list_rec.save()
+    sentence_list = Sentence.objects.filter(Q(revision_number__gt=0) | Q(state='cold', revision_number = 0))
+    rid = random.randint(0, len(sentence_list) - 1)
     sentence = Sentence.objects.get(name=sentence_list[rid])
-    rest_count = Sentence.objects.filter(state='hot',revision_number=0, type='vocabulary', part=part).count()
-    print (random_list)
+    rest_count = Sentence.objects.filter(state='hot',revision_number=0).count()
+
 
     context = {
         'sentence': sentence,
@@ -172,7 +145,7 @@ def random_hot(request):
         
 
     }
-    return render(request, 'index_vocab.html', context)
+    return render(request, 'index.html', context)
 
 
     

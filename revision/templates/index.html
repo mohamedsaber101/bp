@@ -28,8 +28,10 @@
 
 {% endif %}
 
+<audio controls>
+  <source src="{% static sentence.name  %}" type="audio/mp3">
 
-
+</audio>
 
 <div class="h5 col-4"><b style="color:blueviolet;">{{rest_count}} </b>** {{sentence.name}} ** <b style="color:red;">{{sentence.revision_number}}</b>
 </div>

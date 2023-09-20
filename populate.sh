@@ -1,34 +1,51 @@
 #PUT THE CONTENT IN /tmp/a
 id=$1
+rm /tmp/django_script
 type=expression
+part=general
+cd ~/easy_german/$id
 
-file=/tmp/b
-cat /tmp/a |sed 's/\"//g' | sed "s/\'//g"|sed 's/E -- //g'| grep -v '^ \-\-'|grep -v '^\-\-'|grep -v '^$'|grep -v '^ $'|grep -v '^   $'|grep -v '^  $' > /tmp/b
-for i in `seq $(cat $file|wc -l | cut -d' ' -f1)`
+for i in `ls *text|sed 's/.text//g'`
 do
-if [ $((i%2)) -eq 0 ]
-then
-continue
-else
-ii=$((i+1))
-EN=`sed -n ${i}p $file`
-DE=`sed -n ${ii}p $file`
-echo $EN -**- $DE
+part=alle
+DE=`cat $i.text|sed 's/"/4444/g'|sed "s/4444/'/g"`
+ echo $DE |grep '[a-z]' 1>/dev/null 2>/dev/null
+ if [ $? -ne 0 ]
+ then
+         continue
+ fi
 
-echo from revision.models import \*  > /tmp/django_script
-echo a=Sentence.objects.get_or_create\(name=\"${id}-${i}\",DE=\"$DE\",EN=\"$EN\",revision_number=-1,state=\'cold\',type=\"$type\"\) >> /tmp/django_script
-echo a=Index.objects.get_or_create\(name=\"${id}\",state=\'pending\'\) >> /tmp/django_script
-python manage.py shell < /tmp/django_script
+EN=NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
+echo from revision.models import \*  >> /tmp/django_script
+echo a=Sentence.objects.get_or_create\(name=\"${id}-${i}\",DE=\"$DE\",EN=\"$EN\",revision_number=-1,state=\'cold\',type=\"$type\"\,part=\"$part\"\) >> /tmp/django_script
 
-
-
-
-fi
 done
 
 
-echo from revision.models import \*  > /tmp/django_script
+for i in `ls *tixt|sed 's/.tixt//g'`
+do
+part=besonders
+DE=`cat $i.tixt|sed 's/"/4444/g'|sed "s/4444/'/g"`
+echo $DE |grep '[a-z]' 1>/dev/null 2>/dev/null
+if [ $? -ne 0 ]
+then
+        continue
+fi
+EN=NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
+echo a=Sentence.objects.get_or_create\(name=\"${id}-${i}\",DE=\"$DE\",EN=\"$EN\",revision_number=-1,state=\'cold\',type=\"$type\"\,part=\"$part\"\) >> /tmp/django_script
+
+done
+
+
 
 echo a=Index.objects.get_or_create\(name=\"${id}\",state=\'pending\'\) >> /tmp/django_script
+cd ~/bp
 python manage.py shell < /tmp/django_script
+
+cd -
+for i in `ls *mp3|sed 's/.mp3//g'`
+do
+ cp $i.mp3 ~/bp/revision/static/${id}-${i}
+done
+
 
