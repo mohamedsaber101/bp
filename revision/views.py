@@ -19,7 +19,8 @@ part = getattr(p, 'value')
 re_index = 0
 re_list = []
 re_boolean = True
-
+redo = Paramater.objects.get(name='redo_id')
+redo_id = int(getattr(redo, 'value'))
 
 def index(request):
     global mode 
@@ -180,6 +181,8 @@ def next_action(request):
         return redirect('/repeat')
     elif mode == 'dotting':
         return redirect('/dotting')
+    elif mode == 'regular_dotting':
+        return redirect('/regular_dotting')
     
 def set_timer(request, mode='reset'):
     global start_time
@@ -241,6 +244,98 @@ def dotting(request):
 
             rid = random.randint(begin, round)
             missed_words = missed_words + [s_words[rid]]
+            begin = begin + factor
+            round = round + factor
+    else:
+        missed_words = []
+    new_s = ''
+    for i in range(0, s_length):
+        word = ''
+        if s_words[i] in missed_words:
+            for k in range(len(s_words[i].replace(',', ''))):
+                word = word + '.'
+        else:
+            word = s_words[i]
+
+        new_s = new_s + ' ' + word
+    if getattr(sentence, 'type') == 'vocabulary':
+        new_s = '***********'
+    rest_count = Sentence.objects.filter(state='hot',revision_number=0, part=part).count()
+
+
+    context = {
+        'sentence': sentence,
+        'rest_count': rest_count,
+        'timer': str((datetime.datetime.now() - start_time)).split('.')[0],
+        'font_size': font_size,
+        'new_s': new_s,
+
+        
+
+    }
+    return render(request, 'index.html', context)
+
+
+
+
+
+
+
+
+
+#######################
+
+
+
+
+def regular_dotting(request):
+
+
+    global mode
+    mode='regular_dotting'
+    global re_index
+    global re_list
+    global re_boolean
+    global redo_id
+    if len(re_list) >= 3 and re_boolean is True:
+        sentence = Sentence.objects.get(pk=re_list[re_index])
+        re_index += 1
+        re_boolean = False
+        dotting_factor = 're_dotting_factor'
+
+    else:
+        sentence_list = Sentence.objects.filter(Q(revision_number__gt=0, part=part) | Q(state='cold', part=part, revision_number = 0))
+        print (redo_id)
+        print (sentence_list)
+        sentence = Sentence.objects.get(name=sentence_list[redo_id])
+
+        s_id=getattr(sentence, 'pk')
+        redo_id += 1
+        setattr(redo, 'value', str(redo_id) )
+        redo.save()
+        re_list.append(s_id)
+        re_boolean = True
+        dotting_factor = 'dotting_factor'
+
+
+    s=str(getattr(sentence , 'DE'))
+
+    
+    s_words = s.split()
+    s_length = len(s_words)
+    fac = Paramater.objects.get(name=dotting_factor)
+    factor = int(getattr(fac, 'value'))
+
+
+    if s_length >= factor:
+        begin = 0
+        round = factor - 1
+        missed_words = []
+        for i in range(s_length//factor):
+            ns_words = s_words[begin:round]
+
+            rd_id = random.randint(begin, round)
+            missed_words = missed_words + [s_words[rd_id]]
             begin = begin + factor
             round = round + factor
     else:
