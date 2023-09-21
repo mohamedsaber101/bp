@@ -14,6 +14,8 @@ start_time = datetime.datetime.now()
 timer_state = 'running'
 f = Paramater.objects.get(name='font_size')
 font_size = getattr(f, 'value')
+p = Paramater.objects.get(name='part')
+part = getattr(p, 'value')
 re_index = 0
 re_list = []
 re_boolean = True
@@ -24,9 +26,9 @@ def index(request):
     mode='ordered'
     global type
     type = 'index'
-    sentence_name = Sentence.objects.filter(state='hot').order_by('revision_number').first()
+    sentence_name = Sentence.objects.filter(state='hot', part=part).order_by('revision_number').first()
     sentence = Sentence.objects.get(name=str(sentence_name))
-    rest_count = Sentence.objects.filter(state='hot',revision_number=sentence.revision_number).count()
+    rest_count = Sentence.objects.filter(state='hot', part=part,revision_number=sentence.revision_number).count()
     context = {
         'sentence': sentence,
         'rest_count': rest_count,
@@ -40,9 +42,9 @@ def index(request):
 def vocabulary(request):
     global mode
     mode = 'vocabulary'
-    sentence_name = Sentence.objects.filter(state='hot', type='vocabulary').order_by('revision_number').first()
+    sentence_name = Sentence.objects.filter(state='hot', part=part, type='vocabulary').order_by('revision_number').first()
     sentence = Sentence.objects.get(name=str(sentence_name))
-    rest_count = Sentence.objects.filter(state='hot',revision_number=sentence.revision_number, type='vocabulary').count()
+    rest_count = Sentence.objects.filter(state='hot', part=part,revision_number=sentence.revision_number, type='vocabulary').count()
     context = {
         'sentence': sentence,
         'rest_count': rest_count,
@@ -87,7 +89,7 @@ def delete(request, id):
 def repeat(request):
     global mode
     mode = 'repeat'
-    sentence_list = Sentence.objects.filter(type='expression')
+    sentence_list = Sentence.objects.filter(type='expression', part=part)
     global repeat_list
     if len(repeat_list) >= len(sentence_list) - 3:
         repeat_list = []
@@ -130,10 +132,10 @@ def repeat(request):
 def random_hot(request):
     global mode
     mode='random'
-    sentence_list = Sentence.objects.filter(Q(revision_number__gt=0) | Q(state='cold', revision_number = 0))
+    sentence_list = Sentence.objects.filter(Q(revision_number__gt=0, part=part) | Q(state='cold', part=part, revision_number = 0))
     rid = random.randint(0, len(sentence_list) - 1)
     sentence = Sentence.objects.get(name=sentence_list[rid])
-    rest_count = Sentence.objects.filter(state='hot',revision_number=0).count()
+    rest_count = Sentence.objects.filter(state='hot', part=part,revision_number=0).count()
 
 
     context = {
@@ -212,7 +214,7 @@ def dotting(request):
         dotting_factor = 're_dotting_factor'
 
     else:
-        sentence_list = Sentence.objects.filter(Q(revision_number__gt=0) | Q(state='cold', revision_number = 0))
+        sentence_list = Sentence.objects.filter(Q(revision_number__gt=0, part=part) | Q(state='cold', part=part, revision_number = 0))
         rid = random.randint(0, len(sentence_list) - 1)
         sentence = Sentence.objects.get(name=sentence_list[rid])
         s_id=getattr(sentence, 'pk')
@@ -255,7 +257,7 @@ def dotting(request):
         new_s = new_s + ' ' + word
     if getattr(sentence, 'type') == 'vocabulary':
         new_s = '***********'
-    rest_count = Sentence.objects.filter(state='hot',revision_number=0).count()
+    rest_count = Sentence.objects.filter(state='hot',revision_number=0, part=part).count()
 
 
     context = {

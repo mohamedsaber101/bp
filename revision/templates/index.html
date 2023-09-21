@@ -6,6 +6,10 @@
 <div class="row">
 <div class="card text-white bg-dark mb-3 col-12" >
   
+  <div class="col-12"  role="button"><audio controls>
+    <source src="{% static sentence.name  %}" type="audio/mp3">
+  
+  </audio></div>
   {% if new_s %}
   <div class="card text-muted bg-secondary mb-3" >
     <div class="card-body">
@@ -14,10 +18,6 @@
   </div>
   {% endif %}
 
-  <a class="btn btn-primary  col-4  btn-lg" href="{% url 'revision:demote' sentence.pk %}" role="button"><audio controls>
-    <source src="{% static sentence.name  %}" type="audio/mp3">
-  
-  </audio></a>
 
 
     <div class="card-body">
