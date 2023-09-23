@@ -4,12 +4,27 @@
 
 
 <div class="row">
-<div class="card text-white bg-dark mb-3 col-12" >
-  
-  <div class="col-12"  role="button"><audio controls>
+  <div class="col-4"  role="button"><audio controls>
     <source src="{% static sentence.name  %}" type="audio/mp3">
+
   
   </audio></div>
+
+  <div class="col-4"  role="button"><audio controls>
+    <source src="{% static sentence.name  %}" type="audio/mp3">
+
+  
+  </audio></div>
+
+  <div class="col-4"  role="button"><audio controls>
+    <source src="{% static next_sentence.name  %}" type="audio/mp3">
+
+  
+  </audio></div>
+<div class="card text-white bg-dark mb-3 col-12" >
+  
+
+
   {% if new_s %}
   <div class="card text-muted bg-secondary mb-3" >
     <div class="card-body">

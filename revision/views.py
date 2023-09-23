@@ -19,6 +19,7 @@ part = getattr(p, 'value')
 re_index = 0
 re_list = []
 re_boolean = True
+random_boolean = True
 redo = Paramater.objects.get(name='redo_id')
 redo_id = int(getattr(redo, 'value'))
 
@@ -32,6 +33,8 @@ def index(request):
     rest_count = Sentence.objects.filter(state='hot', part=part,revision_number=sentence.revision_number).count()
     context = {
         'sentence': sentence,
+        'next_sentence': Sentence.objects.get(pk=sentence.pk + 1),
+        'prev_sentence': Sentence.objects.get(pk=sentence.pk - 1),
         'rest_count': rest_count,
         'timer': str((datetime.datetime.now() - start_time)).split('.')[0],
         'font_size': font_size,
@@ -84,6 +87,9 @@ def delete(request, id):
         return redirect('/')
     elif mode == 'random':
         return redirect('/random')
+    elif mode in ['regular_dotting', 'dotting']:
+        re_list.pop()
+        return redirect('/'+mode)
 
 
 
@@ -141,6 +147,8 @@ def random_hot(request):
 
     context = {
         'sentence': sentence,
+        'next_sentence': Sentence.objects.get(pk=sentence.pk + 1),
+        'prev_sentence': Sentence.objects.get(pk=sentence.pk - 1),
         'rest_count': rest_count,
         'timer': str((datetime.datetime.now() - start_time)).split('.')[0],
         'font_size': font_size,
@@ -265,6 +273,8 @@ def dotting(request):
 
     context = {
         'sentence': sentence,
+        'next_sentence': Sentence.objects.get(pk=sentence.pk + 1),
+        'prev_sentence': Sentence.objects.get(pk=sentence.pk - 1),
         'rest_count': rest_count,
         'timer': str((datetime.datetime.now() - start_time)).split('.')[0],
         'font_size': font_size,
@@ -296,13 +306,19 @@ def regular_dotting(request):
     global re_index
     global re_list
     global re_boolean
-    global redo_id
-    if len(re_list) >= 3 and re_boolean is True:
-        sentence = Sentence.objects.get(pk=re_list[re_index])
-        re_index += 1
-        re_boolean = False
-        dotting_factor = 're_dotting_factor'
-
+    global random_boolean
+    global redo_id 
+    if len(re_list) >= 3 and (re_boolean is True or random_boolean is True):
+        if re_boolean is True:
+            sentence = Sentence.objects.get(pk=re_list[re_index])
+            re_index += 1
+            re_boolean = False
+            dotting_factor = 're_dotting_factor'
+        else: 
+            r_bo = random.randint(0, re_index)
+            sentence = Sentence.objects.get(pk=re_list[r_bo])
+            random_boolean = False
+            dotting_factor = 're_dotting_factor'
     else:
         sentence_list = Sentence.objects.filter(Q(revision_number__gt=0, part=part) | Q(state='cold', part=part, revision_number = 0))
         print (redo_id)
@@ -315,6 +331,8 @@ def regular_dotting(request):
         redo.save()
         re_list.append(s_id)
         re_boolean = True
+        random_boolean = True
+    
         dotting_factor = 'dotting_factor'
 
 
@@ -357,6 +375,9 @@ def regular_dotting(request):
 
     context = {
         'sentence': sentence,
+        'next_sentence': Sentence.objects.get(pk=sentence.pk + 1),
+        'prev_sentence': Sentence.objects.get(pk=sentence.pk - 1),
+
         'rest_count': rest_count,
         'timer': str((datetime.datetime.now() - start_time)).split('.')[0],
         'font_size': font_size,
