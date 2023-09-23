@@ -82,7 +82,10 @@ def inject(request):
 
 def delete(request, id):
     sentence = Sentence.objects.get(pk=id)
-    sentence.delete()
+    setattr(sentence, 'DE', '-' )
+    setattr(sentence, 'revision_number', 9999 )
+
+    sentence.save()
     if mode == 'ordered':
         return redirect('/')
     elif mode == 'random':
@@ -315,7 +318,7 @@ def regular_dotting(request):
             re_boolean = False
             dotting_factor = 're_dotting_factor'
         else: 
-            r_bo = random.randint(0, re_index)
+            r_bo = random.randint(0, re_index - 1)
             sentence = Sentence.objects.get(pk=re_list[r_bo])
             random_boolean = False
             dotting_factor = 're_dotting_factor'
