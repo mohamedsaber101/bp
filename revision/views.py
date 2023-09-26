@@ -22,6 +22,7 @@ re_boolean = True
 random_boolean = True
 redo = Paramater.objects.get(name='redo_id')
 redo_id = int(getattr(redo, 'value'))
+sentence_list = Sentence.objects.filter(Q(revision_number__gt=0, part=part) | Q(state='cold', part=part, revision_number = 0))
 
 def index(request):
     global mode 
@@ -272,12 +273,20 @@ def dotting(request):
     if getattr(sentence, 'type') == 'vocabulary':
         new_s = '***********'
     rest_count = Sentence.objects.filter(state='hot',revision_number=0, part=part).count()
+    try:
+        next_sentence = Sentence.objects.get(pk=sentence.pk + 1)
+    except Sentence.DoesNotExist:
+        next_sentence = None
 
+    try:
+        prev_sentence = Sentence.objects.get(pk=sentence.pk - 1)
+    except Sentence.DoesNotExist:
+        prev_sentence = None
 
     context = {
         'sentence': sentence,
-        'next_sentence': Sentence.objects.get(pk=sentence.pk + 1),
-        'prev_sentence': Sentence.objects.get(pk=sentence.pk - 1),
+        'next_sentence': next_sentence,
+        'prev_sentence': prev_sentence,
         'rest_count': rest_count,
         'timer': str((datetime.datetime.now() - start_time)).split('.')[0],
         'font_size': font_size,
@@ -311,6 +320,8 @@ def regular_dotting(request):
     global re_boolean
     global random_boolean
     global redo_id 
+    global sentence_list
+    print (re_list)
     if len(re_list) >= 3 and (re_boolean is True or random_boolean is True):
         if re_boolean is True:
             sentence = Sentence.objects.get(pk=re_list[re_index])
@@ -318,17 +329,16 @@ def regular_dotting(request):
             re_boolean = False
             dotting_factor = 're_dotting_factor'
         else: 
-            r_bo = random.randint(0, re_index - 1)
-            sentence = Sentence.objects.get(pk=re_list[r_bo])
+            r_bo = random.randint(0, re_index )
+            sentence = Sentence.objects.get(name=sentence_list[r_bo])
             random_boolean = False
             dotting_factor = 're_dotting_factor'
     else:
-        sentence_list = Sentence.objects.filter(Q(revision_number__gt=0, part=part) | Q(state='cold', part=part, revision_number = 0))
-        print (redo_id)
-        print (sentence_list)
+
         sentence = Sentence.objects.get(name=sentence_list[redo_id])
 
         s_id=getattr(sentence, 'pk')
+        print (sentence)
         redo_id += 1
         setattr(redo, 'value', str(redo_id) )
         redo.save()
@@ -374,12 +384,20 @@ def regular_dotting(request):
     if getattr(sentence, 'type') == 'vocabulary':
         new_s = '***********'
     rest_count = Sentence.objects.filter(state='hot',revision_number=0, part=part).count()
+    try:
+        next_sentence = Sentence.objects.get(pk=sentence.pk + 1)
+    except Sentence.DoesNotExist:
+        next_sentence = None
 
+    try:
+        prev_sentence = Sentence.objects.get(pk=sentence.pk - 1)
+    except Sentence.DoesNotExist:
+        prev_sentence = None
 
     context = {
         'sentence': sentence,
-        'next_sentence': Sentence.objects.get(pk=sentence.pk + 1),
-        'prev_sentence': Sentence.objects.get(pk=sentence.pk - 1),
+        'next_sentence': next_sentence,
+        'prev_sentence': prev_sentence,
 
         'rest_count': rest_count,
         'timer': str((datetime.datetime.now() - start_time)).split('.')[0],
