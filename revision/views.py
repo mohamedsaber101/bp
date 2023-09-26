@@ -85,6 +85,7 @@ def delete(request, id):
     sentence = Sentence.objects.get(pk=id)
     setattr(sentence, 'DE', '-' )
     setattr(sentence, 'revision_number', 9999 )
+    re_index -= 1
 
     sentence.save()
     if mode == 'ordered':
