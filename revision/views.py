@@ -9,6 +9,8 @@ from django.db.models import Q
 from django.core import serializers
 # Create your views here.
 #GLOBAL VARS
+
+
 repeat_list = []
 start_time = datetime.datetime.now()
 timer_state = 'running'
@@ -82,6 +84,7 @@ def inject(request):
 
 
 def delete(request, id):
+    global re_index
     sentence = Sentence.objects.get(pk=id)
     setattr(sentence, 'DE', '-' )
     setattr(sentence, 'revision_number', 9999 )
