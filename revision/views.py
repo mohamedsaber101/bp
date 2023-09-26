@@ -24,7 +24,7 @@ re_boolean = True
 random_boolean = True
 redo = Paramater.objects.get(name='redo_id')
 redo_id = int(getattr(redo, 'value'))
-sentence_list = Sentence.objects.filter(Q(revision_number__gt=0, part=part) | Q(state='cold', part=part, revision_number = 0))
+sentence_list = Sentence.objects.filter(Q(revision_number__gt=0, part=part) | Q(state='cold', part=part, revision_number = 0)).order_by('revision_number')
 
 def index(request):
     global mode 
@@ -207,7 +207,6 @@ def set_timer(request, mode='reset'):
     if mode == 'reset':
         start_time = datetime.datetime.now()
     elif mode == 'pause':
-        print (mode)
         if timer_state == 'running':
             pausing_time = datetime.datetime.now() - start_time
             start_time = datetime.datetime(2070, 1, 1, 00, 00, 00)
@@ -325,7 +324,6 @@ def regular_dotting(request):
     global random_boolean
     global redo_id 
     global sentence_list
-    print (re_list)
     if len(re_list) >= 3 and (re_boolean is True or random_boolean is True):
         if re_boolean is True:
             sentence = Sentence.objects.get(pk=re_list[re_index])
@@ -342,7 +340,6 @@ def regular_dotting(request):
         sentence = Sentence.objects.get(name=sentence_list[redo_id])
 
         s_id=getattr(sentence, 'pk')
-        print (sentence)
         redo_id += 1
         setattr(redo, 'value', str(redo_id) )
         redo.save()
