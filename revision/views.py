@@ -25,7 +25,7 @@ random_boolean = True
 redo = Paramater.objects.get(name='redo_id')
 redo_id = int(getattr(redo, 'value'))
 sentence_list = Sentence.objects.filter(Q(revision_number__gt=0, part=part) | Q(state='cold', part=part, revision_number = 0)).order_by('revision_number')
-
+r_bo_list = []
 def index(request):
     global mode 
     mode='ordered'
@@ -324,6 +324,7 @@ def regular_dotting(request):
     global random_boolean
     global redo_id 
     global sentence_list
+    global r_bo_list
     if len(re_list) >= 3 and (re_boolean is True or random_boolean is True):
         if re_boolean is True:
             sentence = Sentence.objects.get(pk=re_list[re_index])
@@ -331,7 +332,13 @@ def regular_dotting(request):
             re_boolean = False
             dotting_factor = 're_dotting_factor'
         else: 
-            r_bo = random.randint(0, re_index )
+            while True:
+              r_bo = random.randint(0, redo_id )
+              print (r_bo)
+              print (r_bo_list)
+              if r_bo not in r_bo_list:
+                  r_bo_list.append(r_bo)
+                  break
             sentence = Sentence.objects.get(name=sentence_list[r_bo])
             random_boolean = False
             dotting_factor = 're_dotting_factor'
