@@ -348,21 +348,20 @@ def regular_dotting(request):
     global sentence_list
     global r_bo_list
     if len(re_list) >= 3 and (re_boolean is True or random_boolean is True):
-        if re_boolean is True:
-            sentence = Sentence.objects.get(pk=re_list[re_index])
-            re_index += 1
-            re_boolean = False
-            dotting_factor = 're_dotting_factor'
-        else: 
+        if random_boolean is True:
             while True:
               r_bo = random.randint(0, redo_id )
-              print (r_bo)
-              print (r_bo_list)
               if r_bo not in r_bo_list:
+                  print (str(redo_id)+'     '+ str(r_bo))
                   r_bo_list.append(r_bo)
                   break
             sentence = Sentence.objects.get(name=sentence_list[r_bo])
             random_boolean = False
+            dotting_factor = 're_dotting_factor'
+        else: 
+            sentence = Sentence.objects.get(pk=re_list[re_index])
+            re_index += 1
+            re_boolean = False
             dotting_factor = 're_dotting_factor'
     else:
 
