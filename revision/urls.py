@@ -3,7 +3,7 @@ from django.urls import path
 from . import views
 app_name = 'revision'
 urlpatterns = [
-    path('', views.index, name='index'),
+    path('', views.regular_dotting, name='index'),
     path('random/', views.random_hot, name='random_hot'),
     path('dotting/', views.dotting, name='dotting'),
     path('regular_dotting/', views.regular_dotting, name='regular_dotting'),

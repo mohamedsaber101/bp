@@ -18,13 +18,35 @@ f = Paramater.objects.get(name='font_size')
 font_size = getattr(f, 'value')
 p = Paramater.objects.get(name='part')
 part = getattr(p, 'value')
+c = Paramater.objects.get(name='category')
+cat = getattr(c, 'value')
 re_index = 0
 re_list = []
 re_boolean = True
 random_boolean = True
 redo = Paramater.objects.get(name='redo_id')
 redo_id = int(getattr(redo, 'value'))
-sentence_list = Sentence.objects.filter(part=part).order_by('revision_number')
+
+
+font_size = getattr(f, 'value')
+part = getattr(p, 'value')
+cat = getattr(c, 'value')
+sentence_list = Sentence.objects.filter(part=part, category=cat).order_by('revision_number')
+
+def init():
+    global font_size
+    global part
+    global cat
+    global redo_id
+    f = Paramater.objects.get(name='font_size')
+    font_size = getattr(f, 'value')
+    p = Paramater.objects.get(name='part')
+    part = getattr(p, 'value')
+    c = Paramater.objects.get(name='category')
+    cat = getattr(c, 'value')
+    redo = Paramater.objects.get(name='redo_id')
+    redo_id = int(getattr(redo, 'value'))
+
 
 # sentence_list = Sentence.objects.filter(Q(revision_number__gt=0, part=part) | Q(state='cold', part=part, revision_number = 0)).order_by('revision_number')
 r_bo_list = []
@@ -216,6 +238,7 @@ def set_timer(request, mode='reset'):
 
 
 def dotting(request):
+    init()
 
 
     global mode
@@ -312,6 +335,7 @@ def dotting(request):
 
 
 def regular_dotting(request):
+    init()
 
 
     global mode

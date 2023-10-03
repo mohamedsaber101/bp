@@ -19,7 +19,7 @@ class Sentence(models.Model):
     DE = models.CharField(max_length=2000)
     EN = models.CharField(max_length=2000)
     part = models.CharField(max_length=2000)
-    
+    category = models.CharField(max_length=2000, default='splitted')
     revision_number = models.IntegerField(default=0)
     state = models.CharField(max_length=200, choices= STATE_CHOICES, default='hot')
     type = models.CharField(max_length=200, choices= TYPE_CHOICES, default='expression')
