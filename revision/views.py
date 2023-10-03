@@ -24,7 +24,9 @@ re_boolean = True
 random_boolean = True
 redo = Paramater.objects.get(name='redo_id')
 redo_id = int(getattr(redo, 'value'))
-sentence_list = Sentence.objects.filter(Q(revision_number__gt=0, part=part) | Q(state='cold', part=part, revision_number = 0)).order_by('revision_number')
+sentence_list = Sentence.objects.filter(part=part).order_by('revision_number')
+
+# sentence_list = Sentence.objects.filter(Q(revision_number__gt=0, part=part) | Q(state='cold', part=part, revision_number = 0)).order_by('revision_number')
 r_bo_list = []
 def index(request):
     global mode 
@@ -66,20 +68,16 @@ def vocabulary(request):
 
 def inject(request):
 
-    in_process_sentences = Sentence.objects.filter(state='hot', revision_number__lte='0')
-    if len(in_process_sentences) > 0:
-        print ('\n********* DP ********* '+ str(len(in_process_sentences)) + ' are still under processing. Complete them and come back\n')
-        return redirect('/')
-    else:
-        indexed_episode = Index.objects.filter(state='pending').order_by('pk').first()
-        data_rows = Sentence.objects.filter(name__contains = indexed_episode.name)
-        for row in data_rows:
-            setattr(row, 'state', 'hot')
-            row.save()
-        setattr(indexed_episode, 'state', 'injected')
-        setattr(indexed_episode, 'time_of_injection', datetime.datetime.now())     
-        indexed_episode.save()
-        return redirect('/')
+
+    indexed_episode = Index.objects.filter(state='pending').order_by('pk').first()
+    data_rows = Sentence.objects.filter(name__contains = indexed_episode.name)
+    for row in data_rows:
+        setattr(row, 'state', 'hot')
+        row.save()
+    setattr(indexed_episode, 'state', 'injected')
+    setattr(indexed_episode, 'time_of_injection', datetime.datetime.now())     
+    indexed_episode.save()
+    return redirect('/')
 
 
 

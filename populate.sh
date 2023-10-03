@@ -2,7 +2,7 @@
 id=$1
 rm /tmp/django_script
 type=expression
-part=$2
+part=$1
 cd ~/easy_german/$id
 
 for i in `ls *text|sed 's/.text//g'`
