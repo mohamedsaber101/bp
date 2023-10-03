@@ -2,12 +2,12 @@
 id=$1
 rm /tmp/django_script
 type=expression
-part=general
+part=$2
 cd ~/easy_german/$id
 
 for i in `ls *text|sed 's/.text//g'`
 do
-part=alle
+part=$part
 DE=`cat $i.text|sed 's/"/4444/g'|sed "s/4444/'/g"`
  echo $DE |grep '[a-z]' 1>/dev/null 2>/dev/null
  if [ $? -ne 0 ]
@@ -15,7 +15,7 @@ DE=`cat $i.text|sed 's/"/4444/g'|sed "s/4444/'/g"`
          continue
  fi
 
-EN=NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
+EN='-------'
 echo from revision.models import \*  >> /tmp/django_script
 echo a=Sentence.objects.get_or_create\(name=\"${id}-${i}\",DE=\"$DE\",EN=\"$EN\",revision_number=-1,state=\'cold\',type=\"$type\"\,part=\"$part\"\) >> /tmp/django_script
 
@@ -24,14 +24,14 @@ done
 
 for i in `ls *tixt|sed 's/.tixt//g'`
 do
-part=besonders
+part=$part
 DE=`cat $i.tixt|sed 's/"/4444/g'|sed "s/4444/'/g"`
 echo $DE |grep '[a-z]' 1>/dev/null 2>/dev/null
 if [ $? -ne 0 ]
 then
         continue
 fi
-EN=NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
+EN='---------'
 echo a=Sentence.objects.get_or_create\(name=\"${id}-${i}\",DE=\"$DE\",EN=\"$EN\",revision_number=-1,state=\'cold\',type=\"$type\"\,part=\"$part\"\) >> /tmp/django_script
 
 done

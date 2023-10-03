@@ -1,3 +1,20 @@
+cat /t/bb.txt |grep -e Cari: -e Janusz: -e Manuel: -n |cut -d':' -f1 > /tmp/aa
+##############################     /t/bb.txt     ##########################
+#Cari:
+
+#(30:45)
+#Okay. Fahrt nach Polen, Leute. Ihr werdet es nicht bereuen.
+#Manuel:
+
+#(30:49) Ja. Bis bald!
+#Cari:
+
+#(30:50)
+#Und kommt zu unserem Meetup.
+
+
+##########################
+
 ID=$1
 cd ~/easy_german/$ID
 
