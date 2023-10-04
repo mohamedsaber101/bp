@@ -34,7 +34,7 @@ old_selected_sentences = []
 font_size = getattr(f, 'value')
 part = getattr(p, 'value')
 cat = getattr(c, 'value')
-sentence_list = Sentence.objects.filter(part=part, category=cat).order_by('revision_number')
+sentence_list = Sentence.objects.filter(part=part, category=cat).order_by('revision_number').order_by('name')
 
 
 old_dict = {}
@@ -361,23 +361,7 @@ def regular_dotting(request):
     global dotting_factor
     global old_selected_sentences
     if len(re_list) >= 3 and (re_boolean is True or random_boolean is True or old_boolean is True):
-        if random_boolean is True:
-            while True:
-              r_bo = random.randint(0, redo_id )
-              if r_bo not in r_bo_list:
-                  print (str(redo_id)+'     '+ str(r_bo))
-                  r_bo_list.append(r_bo)
-                  break
-            sentence = Sentence.objects.get(name=sentence_list[r_bo])
-            random_boolean = False
-            dotting_factor = 're_dotting_factor'
-        elif re_boolean is True: 
-            sentence = Sentence.objects.get(pk=re_list[re_index])
-            re_index += 1
-            re_boolean = False
-            dotting_factor = 're_dotting_factor'
-
-        elif old_boolean is True:
+        if old_boolean is True:
             if len(old_selected_sentences) == 0:
                 for prev in prev_epis:
                     if prev not in old_dict.keys():
@@ -398,6 +382,25 @@ def regular_dotting(request):
             old_selected_sentences.pop()
             if len(old_selected_sentences) == 0:
                 old_boolean = False
+
+
+        elif random_boolean is True:
+            while True:
+              r_bo = random.randint(0, redo_id )
+              if r_bo not in r_bo_list:
+                  print (str(redo_id)+'     '+ str(r_bo))
+                  r_bo_list.append(r_bo)
+                  break
+            sentence = Sentence.objects.get(name=sentence_list[r_bo])
+            random_boolean = False
+            dotting_factor = 're_dotting_factor'
+        elif re_boolean is True: 
+            sentence = Sentence.objects.get(pk=re_list[re_index])
+            re_index += 1
+            re_boolean = False
+            dotting_factor = 're_dotting_factor'
+
+
 
 
 
