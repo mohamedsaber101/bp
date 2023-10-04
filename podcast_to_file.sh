@@ -47,14 +47,23 @@ all_ch=`wc -c /tmp/$i|cut -d' ' -f1`
 current_pointer=0
 for k in $(seq `wc -l /tmp/$i|cut -d' ' -f1`)
 do
+echo "K    $k"
 line=`sed -n ${k}p  /tmp/$i`
+echo line     $line
 line_ch=`echo $line|wc -c|cut -d' ' -f1`
+echo line_ch     $line_ch
 percentage=`echo "scale=4;$line_ch / $all_ch"|bc -l`
+echo percentage      $percentage
 current_length=`echo "scale=4;$percentage * $all_length"|bc -l`
+echo current_length      $current_length
 actual_length=`echo "scale=4;$current_length + 1"|bc -l`
+echo actual_length    $actual_length
 echo $line > $i-${k}.tixt
-current_pointerr=`echo "scale=4;$current_pointer - 1"|bc -l`
+current_pointerr=`echo "scale=4;$current_pointer"|bc -l|sed 's/^\./0./g'`
+echo current_pointerr     $current_pointerr
 ffmpeg -i $i.mp3 -ss $current_pointerr -t $actual_length -acodec copy $i-${k}.mp3
+echo ffmpeg -i $i.mp3 -ss $current_pointerr -t $actual_length -acodec copy $i-${k}.mp3
 current_pointer=`echo "scale=4;$current_pointer + $current_length"|bc -l`
+echo current_pointer      $current_pointer
 done
 done
