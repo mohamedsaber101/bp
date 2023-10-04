@@ -9,6 +9,8 @@ from django.db.models import Q
 from django.core import serializers
 # Create your views here.
 #GLOBAL VARS
+prev_epis = ['p417']
+
 
 
 repeat_list = []
@@ -24,15 +26,18 @@ re_index = 0
 re_list = []
 re_boolean = True
 random_boolean = True
+old_boolean = True
 redo = Paramater.objects.get(name='redo_id')
 redo_id = int(getattr(redo, 'value'))
-
+old_selected_sentences = []
 
 font_size = getattr(f, 'value')
 part = getattr(p, 'value')
 cat = getattr(c, 'value')
 sentence_list = Sentence.objects.filter(part=part, category=cat).order_by('revision_number')
 
+
+old_dict = {}
 def init():
     global font_size
     global part
@@ -46,6 +51,10 @@ def init():
     cat = getattr(c, 'value')
     redo = Paramater.objects.get(name='redo_id')
     redo_id = int(getattr(redo, 'value'))
+
+        
+                
+
 
 
 # sentence_list = Sentence.objects.filter(Q(revision_number__gt=0, part=part) | Q(state='cold', part=part, revision_number = 0)).order_by('revision_number')
@@ -344,10 +353,14 @@ def regular_dotting(request):
     global re_list
     global re_boolean
     global random_boolean
+    global old_boolean
     global redo_id 
     global sentence_list
     global r_bo_list
-    if len(re_list) >= 3 and (re_boolean is True or random_boolean is True):
+    global old_dict
+    global dotting_factor
+    global old_selected_sentences
+    if len(re_list) >= 3 and (re_boolean is True or random_boolean is True or old_boolean is True):
         if random_boolean is True:
             while True:
               r_bo = random.randint(0, redo_id )
@@ -358,11 +371,44 @@ def regular_dotting(request):
             sentence = Sentence.objects.get(name=sentence_list[r_bo])
             random_boolean = False
             dotting_factor = 're_dotting_factor'
-        else: 
+        elif re_boolean is True: 
             sentence = Sentence.objects.get(pk=re_list[re_index])
             re_index += 1
             re_boolean = False
             dotting_factor = 're_dotting_factor'
+
+        elif old_boolean is True:
+            if len(old_selected_sentences) == 0:
+                for prev in prev_epis:
+                    if prev not in old_dict.keys():
+                        old_dict.update({prev: []})
+                
+                    old_list = Sentence.objects.filter(part=prev, category=cat, revision_number__lt = 100 )
+                    while True:
+                        o_r_id = random.randint(0, len(old_list))
+                        if o_r_id not in old_dict[prev]:
+                                old_dict.update({prev: (old_dict[prev] + [o_r_id])})   
+                                print (old_dict)
+                                print (o_r_id)
+                                break 
+                    old_selected_sentences +=[Sentence.objects.get(name=old_list[o_r_id])]
+                    print (old_selected_sentences) 
+                    dotting_factor = 're_dotting_factor'
+            sentence = old_selected_sentences[-1]
+            old_selected_sentences.pop()
+            if len(old_selected_sentences) == 0:
+                old_boolean = False
+
+
+
+
+
+
+
+
+
+
+
     else:
 
         sentence = Sentence.objects.get(name=sentence_list[redo_id])
@@ -374,6 +420,7 @@ def regular_dotting(request):
         re_list.append(s_id)
         re_boolean = True
         random_boolean = True
+        old_boolean = True
     
         dotting_factor = 'dotting_factor'
 
