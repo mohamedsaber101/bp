@@ -110,7 +110,7 @@ def regular_dotting(request):
 
 
     else:
-
+        print (redo_id)
         sentence = Sentence.objects.get(name=sentence_list[redo_id])
 
         s_id=getattr(sentence, 'pk')
@@ -259,7 +259,9 @@ def delete(request, id):
     sentence.save()
     sentence_list = Sentence.objects.filter(part=part, category=cat).order_by('revision_number')
 
-    redo_id = -1
+    redo_id -= 1
+    setattr(redo, 'value', redo_id )
+    redo.save()
     if mode == 'ordered':
         return redirect('/')
     elif mode == 'random':
