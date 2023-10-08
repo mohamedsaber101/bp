@@ -24,9 +24,9 @@ c = Paramater.objects.get(name='category')
 cat = getattr(c, 'value')
 re_index = 0
 re_list = []
-re_boolean = True
-random_boolean = True
-old_boolean = True
+re_boolean = 'True'
+random_boolean = 'True'
+old_boolean = 'True'
 redo = Paramater.objects.get(name='redo_id')
 redo_id = int(getattr(redo, 'value'))
 old_selected_sentences = []
@@ -52,6 +52,147 @@ def init():
     redo = Paramater.objects.get(name='redo_id')
     redo_id = int(getattr(redo, 'value'))
 
+def regular_dotting(request):
+    init()
+
+    global mode
+    mode='regular_dotting'
+    global re_index
+    global re_list
+    global re_boolean
+    global random_boolean
+    global old_boolean
+    global redo_id 
+    global sentence_list
+    global r_bo_list
+    global old_dict
+    global dotting_factor
+    global old_selected_sentences
+
+    print ('re is '+str(re_boolean) )
+    print ('rand is '+str(random_boolean) )
+    print ('old is '+str(old_boolean) )
+
+
+    if len(re_list) >= 3 and (re_boolean == 'True' or random_boolean == 'True' or old_boolean == 'True'):
+        if old_boolean == 'True':
+            if len(old_selected_sentences) == 0:
+                for prev in prev_epis:
+                    if prev not in old_dict.keys():
+                        old_dict.update({prev: []})
+                
+                    old_list = Sentence.objects.filter(part=prev, category=cat, revision_number__lt = 100 )
+                    while True:
+                        o_r_id = random.randint(0, len(old_list))
+                        if o_r_id not in old_dict[prev]:
+                                old_dict.update({prev: (old_dict[prev] + [o_r_id])})   
+                                break 
+                    old_selected_sentences +=[Sentence.objects.get(name=old_list[o_r_id])]
+                    dotting_factor = 're_dotting_factor'
+            sentence = old_selected_sentences[-1]
+            old_selected_sentences.pop()
+            if len(old_selected_sentences) == 0:
+                old_boolean = 'False'
+
+
+        elif random_boolean == 'True':
+            while True:
+              r_bo = random.randint(0, redo_id )
+              if r_bo not in r_bo_list:
+                  r_bo_list.append(r_bo)
+                  break
+            sentence = Sentence.objects.get(name=sentence_list[r_bo])
+            random_boolean = 'False'
+            dotting_factor = 're_dotting_factor'
+        elif re_boolean == 'True': 
+            sentence = Sentence.objects.get(pk=re_list[re_index])
+            re_index += 1
+            re_boolean = 'False'
+            dotting_factor = 're_dotting_factor'
+
+
+    else:
+
+        sentence = Sentence.objects.get(name=sentence_list[redo_id])
+
+        s_id=getattr(sentence, 'pk')
+        redo_id += 1
+        setattr(redo, 'value', str(redo_id) )
+        redo.save()
+        re_list.append(s_id)
+        re_boolean = 'True'
+        random_boolean = 'True'
+        old_boolean = 'True'
+    
+        dotting_factor = 'dotting_factor'
+
+
+    s=str(getattr(sentence , 'DE'))
+
+    
+    s_words = s.split()
+    s_length = len(s_words)
+    fac = Paramater.objects.get(name=dotting_factor)
+    factor = int(getattr(fac, 'value'))
+
+
+    if s_length >= factor:
+        begin = 0
+        round = factor - 1
+        missed_words = []
+        for i in range(s_length//factor):
+            ns_words = s_words[begin:round]
+
+            rd_id = random.randint(begin, round)
+            missed_words = missed_words + [s_words[rd_id]]
+            begin = begin + factor
+            round = round + factor
+    else:
+        missed_words = []
+    new_s = ''
+    for i in range(0, s_length):
+        word = ''
+        if s_words[i] in missed_words:
+            for k in range(len(s_words[i].replace(',', ''))):
+                word = word + '.'
+        else:
+            word = s_words[i]
+
+        new_s = new_s + ' ' + word
+    if getattr(sentence, 'type') == 'vocabulary':
+        new_s = '***********'
+    rest_count = Sentence.objects.filter(state='hot',revision_number=0, part=part).count()
+    try:
+        next_sentence = Sentence.objects.get(pk=sentence.pk + 1)
+    except Sentence.DoesNotExist:
+        next_sentence = None
+
+    try:
+        prev_sentence = Sentence.objects.get(pk=sentence.pk - 1)
+    except Sentence.DoesNotExist:
+        prev_sentence = None
+
+    context = {
+        'sentence': sentence,
+        'next_sentence': next_sentence,
+        'prev_sentence': prev_sentence,
+
+        'rest_count': rest_count,
+        'timer': str((datetime.datetime.now() - start_time)).split('.')[0],
+        'font_size': font_size,
+        'new_s': new_s,
+
+        
+
+    }
+    print ('@re is '+str(re_boolean) )
+    print ('@rand is '+str(random_boolean) )
+    print ('@old is '+str(old_boolean) )
+    return render(request, 'index.html', context)
+
+
+
+#######
         
                 
 
@@ -255,7 +396,7 @@ def dotting(request):
     global re_index
     global re_list
     global re_boolean
-    if len(re_list) >= 3 and re_boolean is True:
+    if len(re_list) >= 3 and re_boolean == 'True':
         sentence = Sentence.objects.get(pk=re_list[re_index])
         re_index += 1
         re_boolean = False
@@ -341,150 +482,4 @@ def dotting(request):
 #######################
 
 
-
-
-def regular_dotting(request):
-    init()
-
-
-    global mode
-    mode='regular_dotting'
-    global re_index
-    global re_list
-    global re_boolean
-    global random_boolean
-    global old_boolean
-    global redo_id 
-    global sentence_list
-    global r_bo_list
-    global old_dict
-    global dotting_factor
-    global old_selected_sentences
-    if len(re_list) >= 3 and (re_boolean is True or random_boolean is True or old_boolean is True):
-        if old_boolean is True:
-            if len(old_selected_sentences) == 0:
-                for prev in prev_epis:
-                    if prev not in old_dict.keys():
-                        old_dict.update({prev: []})
-                
-                    old_list = Sentence.objects.filter(part=prev, category=cat, revision_number__lt = 100 )
-                    while True:
-                        o_r_id = random.randint(0, len(old_list))
-                        if o_r_id not in old_dict[prev]:
-                                old_dict.update({prev: (old_dict[prev] + [o_r_id])})   
-                                print (old_dict)
-                                print (o_r_id)
-                                break 
-                    old_selected_sentences +=[Sentence.objects.get(name=old_list[o_r_id])]
-                    print (old_selected_sentences) 
-                    dotting_factor = 're_dotting_factor'
-            sentence = old_selected_sentences[-1]
-            old_selected_sentences.pop()
-            if len(old_selected_sentences) == 0:
-                old_boolean = False
-
-
-        elif random_boolean is True:
-            while True:
-              r_bo = random.randint(0, redo_id )
-              if r_bo not in r_bo_list:
-                  print (str(redo_id)+'     '+ str(r_bo))
-                  r_bo_list.append(r_bo)
-                  break
-            sentence = Sentence.objects.get(name=sentence_list[r_bo])
-            random_boolean = False
-            dotting_factor = 're_dotting_factor'
-        elif re_boolean is True: 
-            sentence = Sentence.objects.get(pk=re_list[re_index])
-            re_index += 1
-            re_boolean = False
-            dotting_factor = 're_dotting_factor'
-
-
-
-
-
-
-
-
-
-
-
-
-
-    else:
-
-        sentence = Sentence.objects.get(name=sentence_list[redo_id])
-
-        s_id=getattr(sentence, 'pk')
-        redo_id += 1
-        setattr(redo, 'value', str(redo_id) )
-        redo.save()
-        re_list.append(s_id)
-        re_boolean = True
-        random_boolean = True
-        old_boolean = True
-    
-        dotting_factor = 'dotting_factor'
-
-
-    s=str(getattr(sentence , 'DE'))
-
-    
-    s_words = s.split()
-    s_length = len(s_words)
-    fac = Paramater.objects.get(name=dotting_factor)
-    factor = int(getattr(fac, 'value'))
-
-
-    if s_length >= factor:
-        begin = 0
-        round = factor - 1
-        missed_words = []
-        for i in range(s_length//factor):
-            ns_words = s_words[begin:round]
-
-            rd_id = random.randint(begin, round)
-            missed_words = missed_words + [s_words[rd_id]]
-            begin = begin + factor
-            round = round + factor
-    else:
-        missed_words = []
-    new_s = ''
-    for i in range(0, s_length):
-        word = ''
-        if s_words[i] in missed_words:
-            for k in range(len(s_words[i].replace(',', ''))):
-                word = word + '.'
-        else:
-            word = s_words[i]
-
-        new_s = new_s + ' ' + word
-    if getattr(sentence, 'type') == 'vocabulary':
-        new_s = '***********'
-    rest_count = Sentence.objects.filter(state='hot',revision_number=0, part=part).count()
-    try:
-        next_sentence = Sentence.objects.get(pk=sentence.pk + 1)
-    except Sentence.DoesNotExist:
-        next_sentence = None
-
-    try:
-        prev_sentence = Sentence.objects.get(pk=sentence.pk - 1)
-    except Sentence.DoesNotExist:
-        prev_sentence = None
-
-    context = {
-        'sentence': sentence,
-        'next_sentence': next_sentence,
-        'prev_sentence': prev_sentence,
-
-        'rest_count': rest_count,
-        'timer': str((datetime.datetime.now() - start_time)).split('.')[0],
-        'font_size': font_size,
-        'new_s': new_s,
-
-        
-
-    }
-    return render(request, 'index.html', context)
 
