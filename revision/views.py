@@ -69,9 +69,9 @@ def regular_dotting(request):
     global dotting_factor
     global old_selected_sentences
 
-    print ('re is '+str(re_boolean) )
-    print ('rand is '+str(random_boolean) )
-    print ('old is '+str(old_boolean) )
+    # print ('re is '+str(re_boolean) )
+    # print ('rand is '+str(random_boolean) )
+    # print ('old is '+str(old_boolean) )
 
 
     if len(re_list) >= 3 and (re_boolean == 'True' or random_boolean == 'True' or old_boolean == 'True'):
@@ -185,9 +185,9 @@ def regular_dotting(request):
         
 
     }
-    print ('@re is '+str(re_boolean) )
-    print ('@rand is '+str(random_boolean) )
-    print ('@old is '+str(old_boolean) )
+    # print ('@re is '+str(re_boolean) )
+    # print ('@rand is '+str(random_boolean) )
+    # print ('@old is '+str(old_boolean) )
     return render(request, 'index.html', context)
 
 
