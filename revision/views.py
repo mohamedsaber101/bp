@@ -33,7 +33,7 @@ old_selected_sentences = []
 font_size = getattr(f, 'value')
 part = getattr(p, 'value')
 cat = getattr(c, 'value')
-sentence_list = Sentence.objects.filter(part=part, category=cat).order_by('revision_number').order_by('name')
+sentence_list = Sentence.objects.filter(part=part, category=cat).order_by('revision_number')
 
 
 old_dict = {}
@@ -256,7 +256,7 @@ def delete(request, id):
     sentence = Sentence.objects.get(pk=id)
     setattr(sentence, 'revision_number', 9999)
     sentence.save()
-    sentence_list = Sentence.objects.filter(part=part, category=cat).order_by('revision_number').order_by('name')
+    sentence_list = Sentence.objects.filter(part=part, category=cat).order_by('revision_number')
 
     redo_id = -1
     if mode == 'ordered':
