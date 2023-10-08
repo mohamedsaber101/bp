@@ -253,6 +253,7 @@ def inject(request):
 
 def delete(request, id):
     global sentence_list
+    global redo_id
     sentence = Sentence.objects.get(pk=id)
     setattr(sentence, 'revision_number', 9999)
     sentence.save()
