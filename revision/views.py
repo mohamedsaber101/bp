@@ -254,7 +254,8 @@ def inject(request):
 def delete(request, id):
     global sentence_list
     sentence = Sentence.objects.get(pk=id)
-    sentence.delete()
+    setattr(sentence, 'revision_number', 9999)
+    sentence.save()
     sentence_list = Sentence.objects.filter(part=part, category=cat).order_by('revision_number').order_by('name')
 
     redo_id = -1
