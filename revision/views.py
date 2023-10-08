@@ -22,7 +22,6 @@ p = Paramater.objects.get(name='part')
 part = getattr(p, 'value')
 c = Paramater.objects.get(name='category')
 cat = getattr(c, 'value')
-re_index = 0
 re_list = []
 re_boolean = 'True'
 random_boolean = 'True'
@@ -57,7 +56,6 @@ def regular_dotting(request):
 
     global mode
     mode='regular_dotting'
-    global re_index
     global re_list
     global re_boolean
     global random_boolean
@@ -69,9 +67,9 @@ def regular_dotting(request):
     global dotting_factor
     global old_selected_sentences
 
-    # print ('re is '+str(re_boolean) )
-    # print ('rand is '+str(random_boolean) )
-    # print ('old is '+str(old_boolean) )
+    print ('re is '+str(re_boolean) )
+    print ('rand is '+str(random_boolean) )
+    print ('old is '+str(old_boolean) )
 
 
     if len(re_list) >= 3 and (re_boolean == 'True' or random_boolean == 'True' or old_boolean == 'True'):
@@ -104,9 +102,9 @@ def regular_dotting(request):
             sentence = Sentence.objects.get(name=sentence_list[r_bo])
             random_boolean = 'False'
             dotting_factor = 're_dotting_factor'
+
         elif re_boolean == 'True': 
-            sentence = Sentence.objects.get(pk=re_list[re_index])
-            re_index += 1
+            sentence = Sentence.objects.get(name=sentence_list[redo_id - 2 ])
             re_boolean = 'False'
             dotting_factor = 're_dotting_factor'
 
@@ -185,9 +183,9 @@ def regular_dotting(request):
         
 
     }
-    # print ('@re is '+str(re_boolean) )
-    # print ('@rand is '+str(random_boolean) )
-    # print ('@old is '+str(old_boolean) )
+    print ('@re is '+str(re_boolean) )
+    print ('@rand is '+str(random_boolean) )
+    print ('@old is '+str(old_boolean) )
     return render(request, 'index.html', context)
 
 
@@ -254,13 +252,12 @@ def inject(request):
 
 
 def delete(request, id):
-    global re_index
+    global sentence_list
     sentence = Sentence.objects.get(pk=id)
-    setattr(sentence, 'DE', '-' )
-    setattr(sentence, 'revision_number', 9999 )
-    re_index -= 1
+    sentence.delete()
+    sentence_list = Sentence.objects.filter(part=part, category=cat).order_by('revision_number').order_by('name')
 
-    sentence.save()
+    redo_id = -1
     if mode == 'ordered':
         return redirect('/')
     elif mode == 'random':
@@ -393,12 +390,10 @@ def dotting(request):
 
     global mode
     mode='dotting'
-    global re_index
     global re_list
     global re_boolean
     if len(re_list) >= 3 and re_boolean == 'True':
-        sentence = Sentence.objects.get(pk=re_list[re_index])
-        re_index += 1
+        sentence = Sentence.objects.get(pk=re_list[redo_id - 2])
         re_boolean = False
         dotting_factor = 're_dotting_factor'
 
