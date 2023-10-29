@@ -9,7 +9,7 @@ from django.db.models import Q
 from django.core import serializers
 # Create your views here.
 #GLOBAL VARS
-prev_epis = ['p417']
+prev_epis = []#['p417']
 
 
 
@@ -72,8 +72,7 @@ def regular_dotting(request):
     print ('old is '+str(old_boolean) )
 
 
-    if len(re_list) >= 3 and (re_boolean == 'True' or random_boolean == 'True' or old_boolean == 'True'):
-        if old_boolean == 'True':
+    if old_boolean == 'True' and len(prev_epis) > 0:
             if len(old_selected_sentences) == 0:
                 for prev in prev_epis:
                     if prev not in old_dict.keys():
@@ -92,8 +91,11 @@ def regular_dotting(request):
             if len(old_selected_sentences) == 0:
                 old_boolean = 'False'
 
+    elif len(re_list) >= 3 and (re_boolean == 'True' or random_boolean == 'True'):
+        
 
-        elif random_boolean == 'True':
+
+        if random_boolean == 'True':
             while True:
               r_bo = random.randint(0, redo_id )
               if r_bo not in r_bo_list:

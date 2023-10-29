@@ -1,5 +1,5 @@
 #PUT THE CONTENT IN /tmp/a
-id=rverso
+id=reverso
 rm /tmp/django_script
 type=expression
 part=$id
