@@ -176,7 +176,7 @@ def regular_dotting(request):
         'sentence': sentence,
         'next_sentence': next_sentence,
         'prev_sentence': prev_sentence,
-
+        're_list': len(re_list),
         'rest_count': rest_count,
         'timer': str((datetime.datetime.now() - start_time)).split('.')[0],
         'font_size': font_size,
