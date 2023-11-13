@@ -65,9 +65,26 @@
 
 {% endblock %}
 
+<h2 id="refresh-timer"></h2>
 
 </body>
 
+<script >
+  const refreshTimer = document.getElementById('refresh-timer');
+
+let timerInSeconds = 0;
+
+setInterval(() => {
+  timerInSeconds += 1;
+
+  refreshTimer.innerHTML = `Refreshing page in: ${timerInSeconds} seconds`;
+
+  if (timerInSeconds >= {{ refresh_interval }}) {
+    window.location.reload();
+  }
+}, 1000);
+
+</script>
 
 </html>
 

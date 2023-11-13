@@ -18,6 +18,10 @@ start_time = datetime.datetime.now()
 timer_state = 'running'
 f = Paramater.objects.get(name='font_size')
 font_size = getattr(f, 'value')
+
+ref = Paramater.objects.get(name='refresh_interval')
+refresh_interval = getattr(ref, 'value')
+
 p = Paramater.objects.get(name='part')
 part = getattr(p, 'value')
 c = Paramater.objects.get(name='category')
@@ -181,6 +185,7 @@ def regular_dotting(request):
         'timer': str((datetime.datetime.now() - start_time)).split('.')[0],
         'font_size': font_size,
         'new_s': new_s,
+        'refresh_interval': s_length*float(refresh_interval),
 
         
 
@@ -215,6 +220,7 @@ def index(request):
         'rest_count': rest_count,
         'timer': str((datetime.datetime.now() - start_time)).split('.')[0],
         'font_size': font_size,
+        'refresh_interval': refresh_interval,
 
 
     }
@@ -231,6 +237,7 @@ def vocabulary(request):
         'rest_count': rest_count,
         'timer': str((datetime.datetime.now() - start_time)).split('.')[0],
         'font_size': font_size,
+        'refresh_interval': refresh_interval,
 
         
 
@@ -312,6 +319,7 @@ def repeat(request):
         'sentence3': sentence3,
         'timer': str((datetime.datetime.now() - start_time)).split('.')[0],
         'font_size': font_size,
+        'refresh_interval': refresh_interval,
 
     }
 
@@ -333,6 +341,7 @@ def random_hot(request):
         'rest_count': rest_count,
         'timer': str((datetime.datetime.now() - start_time)).split('.')[0],
         'font_size': font_size,
+        'refresh_interval': refresh_interval,
 
         
 
@@ -466,6 +475,7 @@ def dotting(request):
         'timer': str((datetime.datetime.now() - start_time)).split('.')[0],
         'font_size': font_size,
         'new_s': new_s,
+        'refresh_interval': refresh_interval,
 
         
 
